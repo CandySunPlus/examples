@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	"context"
+
 	proto "github.com/micro/examples/stream/server/proto"
 	"github.com/micro/go-micro"
+	grpcClient "github.com/micro/go-plugins/client/grpc"
 )
 
 func bidirectional(cl proto.StreamerService) {
@@ -63,7 +65,9 @@ func serverStream(cl proto.StreamerService) {
 }
 
 func main() {
-	service := micro.NewService()
+	service := micro.NewService(
+		micro.Client(grpcClient.NewClient()),
+	)
 	service.Init()
 
 	// create client

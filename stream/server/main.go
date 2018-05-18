@@ -1,12 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"context"
+
 	"github.com/micro/go-micro"
+	"github.com/micro/go-micro/server"
 
 	proto "github.com/micro/examples/stream/server/proto"
+	grpcServer "github.com/micro/go-plugins/server/grpc"
 )
 
 type Streamer struct{}
@@ -27,6 +31,7 @@ func (e *Streamer) Stream(ctx context.Context, stream proto.Streamer_StreamStrea
 	for {
 		req, err := stream.Recv()
 		if err != nil {
+			fmt.Println(err)
 			return err
 		}
 		log.Printf("Got msg %v", req.Count)
@@ -39,7 +44,8 @@ func (e *Streamer) Stream(ctx context.Context, stream proto.Streamer_StreamStrea
 func main() {
 	// new service
 	service := micro.NewService(
-		micro.Name("go.micro.srv.stream"),
+		micro.Server(grpcServer.NewServer(server.Name("go.micro.srv.stream"))),
+		// micro.Name("go.micro.srv.stream"),
 	)
 
 	// Init command line
